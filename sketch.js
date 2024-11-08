@@ -1,11 +1,11 @@
-let density = 0.005; // 背景线条密度
+let density = 0.005; // Background line density
 let squareColor, strokeColor, baseColors;
-let baseUnits = []; // 存放底座小长方形的数组
-let baseX; // 底座水平位置
-let flyingBalls = []; // 存储所有生成的飞行球
+let baseUnits = []; // Array of small rectangles holding bases
+let baseX;
+let flyingBalls = []; // Array of flying balls
 let headnumber = 3
 
-// BicolorCircle 类
+// BicolorCircle class
 class BicolorCircle {
   constructor(x, y, diameter) {
     this.x = x;
@@ -14,19 +14,19 @@ class BicolorCircle {
   }
 
   display() {
-    // 设置统一的描边
+    // Setting a uniform stroke
     stroke(strokeColor);
     strokeWeight(1.5);
 
-    // 绘制上半边红色
+    // Draw the top half red
     fill('#fc4b46');                                                                                                  
     arc(this.x, this.y, this.diameter, this.diameter, PI, 0);
 
-    // 绘制下半边绿色
+    // Drawing the lower half green
     fill('#5ea269');
     arc(this.x, this.y, this.diameter, this.diameter, 0, PI);
 
-    // 绘制中间的黄线分界
+    // Drawing the yellow line dividing the center
     stroke('#e4be6e');
     line(this.x - this.diameter / 2 + 3, this.y, this.x + this.diameter / 2 - 3, this.y);
   }
@@ -34,49 +34,47 @@ class BicolorCircle {
 
 class FlyingBicolorCircle extends BicolorCircle {
   constructor(x, y, diameter) {
-    super(x, y, diameter); // 继承父类的构造函数
-    this.speedY = -15; // 初始向上速度
-    this.speedX = random(-2, 2); // 随机的水平速度
-    this.active = true; // 新增属性，用于检测球是否活跃
+    super(x, y, diameter);
+    this.speedY = -15;
+    this.speedX = random(-2, 2);
+    this.active = true; // Whether the ball is shown on the screen
   }
 
-  // 更新位置并检测边缘反弹
   update() {
     this.y += this.speedY;
     this.x += this.speedX;
     
-    // 定义鼠标范围的边界
+    // Define the range of the mouse
     let mouseRangeLeft = mouseX - 50;
     let mouseRangeRight = mouseX + 50;
 
-    // 碰到顶部边缘反弹
+    // Bounce back after reaching the top
     if (this.y < this.diameter / 2) {
       this.y = this.diameter / 2;
       this.speedY *= -1;
     }
     
-    // 碰到底部边缘反弹
+    // Bounce back after reaching the bottom
     if (this.y > height * 0.6 - this.diameter / 2) {
       if (this.x > mouseRangeLeft && this.x < mouseRangeRight) {
         this.y = height * 0.6 - this.diameter / 2;
-        this.speedY *= -1; // 在鼠标范围内反弹
+        this.speedY *= -1;
       }
+
+      // Mark as not active
       else if(this.y > height - this.diameter / 2) {
-        // 超出反弹范围，标记为不活跃
         this.active = false;
       }
     }
 
-    // 碰到左右边缘反弹
+    // Bounce back after reaching the left or right
     if (this.x < this.diameter / 2 || this.x > width - this.diameter / 2) {
       this.speedX *= -1;
     }
   }
-
-  // 直接使用父类的 display() 方法
 }
 
-// RectangleUnit 类
+// RectangleUnit class
 class RectangleUnit {
   constructor(x, y, width, height, color) {
     this.x = x;
@@ -89,13 +87,13 @@ class RectangleUnit {
   }
 
   display() {
-    // 小长方形底座
+    // Rectangular base
     stroke('#e4be6e'); 
     strokeWeight(3);
     fill(this.color);
     rect(this.x, this.y, this.width, this.height);
 
-    // 绘制底边半圆
+    // Drawing the bottom half-circle
     noStroke(); 
     fill(this.bottomSemicircleColor);
     arc(
@@ -115,41 +113,42 @@ function setup() {
   stroke(255, 255, 102, 50);
   noFill();
 
-  // 定义统一的描边颜色
+  // Define uniform stroke colours
   strokeColor = '#3c4449';
 
-  // 根据画布面积计算线条数量
+  // Calculate the number of lines based on the canvas area
   let numBranches = int(windowWidth * windowHeight * density);
 
-  // 背景线条
+  // background line
   for (let i = 0; i < numBranches; i++) {
     drawBranch(random(width), random(height));
   }
 
-  // 绘制正方形
+  // Drawing Squares
   squareColor = color('#69a27d');
   drawGreenSquares();
 
-  // 创建底座
+  // Creating a base
   baseColors = ['#e4be6e', '#5ea269', '#fc4b46'];
   createBase();
 
-  // 初始化底座 X 坐标
   baseX = windowWidth / 2;
 
-  // 绘制底座
+  // Drawing a base
   drawBase();
 
-  // 绘制圆
+  // Drawing Circles
   drawConnectedCircles();
 }
 
+  // Drawing Circles
 function drawConnectedCircles() {
   let squareSize = height * 0.05;
   let baseWidth = squareSize * 3.5;
   let rectWidth = baseWidth / 6;
   let yPosition = height * 0.8 - (rectWidth * 1.5) / 2;
 
+    // Record data for the bottom five horizontal circles
   let diameters = [];
   let totalWidth = 0;
   for (let i = 0; i < 5; i++) {
@@ -158,8 +157,9 @@ function drawConnectedCircles() {
     totalWidth += diameter;
   }
 
-  let startX = baseX - totalWidth / 2; // 水平中心位置
+  let startX = baseX - totalWidth / 2; 
 
+  // Draw the bottom five horizontal circles
   let currentX = startX;
   for (let i = 0; i < 5; i++) {
     let circleDiameter = diameters[i];
@@ -167,20 +167,25 @@ function drawConnectedCircles() {
     bicolorCircle.display();
     currentX += circleDiameter;
 
+    // Draw six vertical circles for the third circle
     if (i === 2) {
-      // 绘制上方的竖直和水平圆
+
+      // Record data with the fifth circle as the reference
       let verticalY = yPosition - circleDiameter / 2;
       let fifthVerticalCircleY = null;
       let fifthCircleDiameter = null;
 
       for (let j = 0; j < 6; j++) {
         let verticalDiameter = random(rectWidth * 0.75, rectWidth * 1.25);
+        // Rotate 90 degrees
         push();
         translate(currentX - circleDiameter / 2, verticalY - verticalDiameter / 2);
         rotate(HALF_PI);
         let verticalCircle = new BicolorCircle(0, 0, verticalDiameter);
         verticalCircle.display();
         pop();
+        
+        // Record the centre position and diameter at the fifth vertical circle
         if (j === 4) {
           fifthVerticalCircleY = verticalY;
           fifthCircleDiameter = verticalDiameter;
@@ -188,11 +193,13 @@ function drawConnectedCircles() {
         verticalY -= verticalDiameter;
       }
 
+      // Add horizontal circles to the left and right sides of the fifth vertical circle.
       if (fifthVerticalCircleY !== null && fifthCircleDiameter !== null) {
         let adjustedY = fifthVerticalCircleY - fifthCircleDiameter / 2;
         let leftDiameters = [];
         let leftTotalWidth = 0;
 
+        // Record data for the fifth circle
         for (let k = 0; k < 4; k++) {
           let leftDiameter = random(rectWidth * 0.5, rectWidth);
           leftDiameters.push(leftDiameter);
@@ -201,6 +208,7 @@ function drawConnectedCircles() {
 
         let leftStartX = currentX - circleDiameter / 2 - fifthCircleDiameter / 2 - leftTotalWidth;
 
+        // Draw four horizontal circles on the left side
         for (let k = 0; k < 4; k++) {
           let leftCircleDiameter = leftDiameters[k];
           let leftCircleX = leftStartX + leftCircleDiameter / 2;
@@ -208,10 +216,12 @@ function drawConnectedCircles() {
           leftCircle.display();
           leftStartX += leftCircleDiameter;
 
+          // Draw four vertical circles on the left side
           if (k === 0) {
             let verticalY = adjustedY - leftCircleDiameter / 2;
             for (let j = 0; j < 4; j++) {
               let verticalDiameter = random(rectWidth * 0.75, rectWidth * 1);
+              // Rotate 90 degrees
               push();
               translate(leftCircleX, verticalY - verticalDiameter / 2);
               rotate(HALF_PI);
@@ -223,6 +233,7 @@ function drawConnectedCircles() {
           }
         }
 
+        // Draw three horizontal circles on the right side
         let rightDiameters = [];
         let rightTotalWidth = 0;
 
@@ -245,6 +256,7 @@ function drawConnectedCircles() {
             let verticalY = adjustedY - rightCircleDiameter / 2;
             for (let j = 0; j < 4; j++) {
               let verticalDiameter = random(rectWidth * 0.75, rectWidth * 1);
+              // Rotate 90 degrees
               push();
               translate(rightCircleX, verticalY - verticalDiameter / 2);
               rotate(HALF_PI);
@@ -257,18 +269,22 @@ function drawConnectedCircles() {
         }
       }
 
+      // Draw three horizontal circles above the vertical circle.
       let topYPosition = verticalY;
       let topDiameters = [];
       let topTotalWidth = 0;
 
+      // Generate the diameters of the top three horizontal circles and calculate the total width
       for (let k = 0; k < headnumber; k++) {
         let topDiameter = random(rectWidth * 0.5, rectWidth);
         topDiameters.push(topDiameter);
         topTotalWidth += topDiameter;
       }
 
+      // Calculate the starting x-position of the top horizontal alignment so that it is centred
       let topStartX = currentX - circleDiameter / 2 - topTotalWidth / 2;
 
+      // Draw three circles horizontally aligned at the top
       for (let k = 0; k < headnumber; k++) {
         let topCircleDiameter = topDiameters[k];
         let topCircleX = topStartX + topCircleDiameter / 2;
@@ -280,7 +296,7 @@ function drawConnectedCircles() {
   }
 }
 
-// 绘制背景线条
+// Drawing background lines
 function drawBranch(startX, startY) {
   let length = random(20, 50);
   let angle = random(TWO_PI);
@@ -297,7 +313,7 @@ function drawBranch(startX, startY) {
   endShape();
 }
 
-// 绘制绿色正方形
+// Drawing green squares
 function drawGreenSquares() {
   let squareSize = height * 0.05;
   let numSquares = width / squareSize;
@@ -308,21 +324,21 @@ function drawGreenSquares() {
   strokeWeight(3);
 
   for (let i = 0; i < numSquares; i++) {
-    let yOffset = random(-5, 5); // 上下随机偏移，范围在 -5 到 5 像素之间
+    let yOffset = random(-5, 5);
     rect(i * squareSize, yPositionBase + yOffset, squareSize, squareSize);
   }
 }
 
-// 创建底座
+// Creating a base
 function createBase() {
-  // 按比例计算小长方形大小
+  // Proportionally sizing small rectangles
   let squareSize = height * 0.05;
   let baseWidth = squareSize * 3.5;
   let rectWidth = baseWidth / 6;
   let rectHeight = rectWidth * 1.5;
   let yPosition = height * 0.8 - rectHeight / 2;
 
-  // 创建底座的小长方形并存储到数组
+  // Create small rectangles for the base and store them in an array.
   baseUnits = [];
   for (let i = 0; i < 6; i++) {
     let x = (width - baseWidth) / 2 + i * rectWidth;
@@ -332,6 +348,7 @@ function createBase() {
   }
 }
 
+// Drawing the base
 function drawBase() {
   let squareSize = height * 0.05;
   let baseWidth = squareSize * 3.5;
@@ -339,31 +356,31 @@ function drawBase() {
   let rectHeight = rectWidth * 1.5;
   let yPosition = height * 0.8 - rectHeight / 2;
 
-  // 绘制底座的外围描边
+  // Control the position use the basX
   push();
-  translate(baseX - baseWidth / 2, yPosition); // 使用 baseX 控制底座水平位置
+  translate(baseX - baseWidth / 2, yPosition);
   stroke(strokeColor);
   strokeWeight(1.5);
   noFill();
   rect(-3, -3, baseWidth + 6, rectHeight + 6);
   pop();
 
-  // 绘制每个小长方形
+  // Draw each small rectangle
   for (let i = 0; i < baseUnits.length; i++) {
     let unit = baseUnits[i];
-    unit.x = baseX - baseWidth / 2 + i * rectWidth; // 根据 baseX 动态设置每个小长方形的水平位置
+    unit.x = baseX - baseWidth / 2 + i * rectWidth;
     unit.display();
   }
 }
 
-// 适应屏幕大小
+// Adaptation to screen size
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   setup();
 }
 
 function draw() {
-  // 更新 baseX 为鼠标的 X 坐标
+  // Update the baseX as the mouseX
   baseX = mouseX;
 
   background('#1E3A5F');
@@ -371,22 +388,20 @@ function draw() {
   stroke(255, 255, 102, 50);
   noFill();
 
-  // 定义统一的描边颜色
   strokeColor = '#3c4449';
 
-  // 根据画布面积计算线条数量
+  // Calculate the number of lines based on the canvas area
   let numBranches = int(windowWidth * windowHeight * density);
 
-  // 背景线条
+  // background line
   for (let i = 0; i < numBranches; i++) {
     drawBranch(random(width), random(height));
   }
 
-  // 绘制正方形
+  // Drawing Squares
   squareColor = color('#69a27d');
   drawGreenSquares();
 
-  // 使用最新的 baseX 重新绘制底座和连接的圆
   drawBase();
   drawConnectedCircles();
 
@@ -395,7 +410,7 @@ function draw() {
     ball.update();
     ball.display();
 
-    // 移除不活跃的球
+    // Remove the not active balls
     if (!ball.active) {
       flyingBalls.splice(i, 1);
     }
@@ -409,12 +424,12 @@ function draw() {
   }
 }
 
-// 在鼠标点击时生成一个新球
+// Generate a new ball when mose pressed 
 function mousePressed() {
-  // 只允许生成最多 3 个球
+  // Limit the amount of balls
   if (flyingBalls.length < 3 && headnumber > 0) {
     let ball = new FlyingBicolorCircle(mouseX, height * 0.6, 20);
     flyingBalls.push(ball);
-    headnumber -= 1; // 减少 headnumber
+    headnumber -= 1; // Reduce the headnumber
   }
 }

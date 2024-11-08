@@ -20,6 +20,8 @@ class BicolorCircle {
 
     // 绘制上半边红色
     fill('#fc4b46');                                                                                                  
+    arc(this.x, this.y, this.diameter, this.diameter, PI, 0);
+
     // 绘制下半边绿色
     fill('#5ea269');
     arc(this.x, this.y, this.diameter, this.diameter, 0, PI);

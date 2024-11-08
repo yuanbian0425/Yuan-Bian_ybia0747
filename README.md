@@ -9,5 +9,12 @@ Each mouse click will launch an apple from the tree, and this apple will bounce 
 The game will end when all apples are out of the screen range
 
 ## Details
-### method
+### Method
 User Input
+### Animated properties
+#### Size
+In order to leave more space for the flying apples, I adjusted the position and size of the original apple tree
+#### Mouse-follow effect
+The apple tree and base will follow the mouse movement
+#### Launch apples
+When mouse clicked, the original code apples are reduced and new apples are created to show an effect similar to the firing of apples from apple trees

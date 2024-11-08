@@ -21,3 +21,4 @@ When mouse clicked, the original code apples are reduced and new apples are crea
 ### Inspiration
 Inspired by the most common Arkanoid game as a child
 ![Arkanoid game](https://images-eu.ssl-images-amazon.com/images/I/91KvSEjoGhL.png)
+### Technical explanation

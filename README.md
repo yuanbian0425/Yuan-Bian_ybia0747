@@ -23,4 +23,5 @@ Inspired by the most common Arkanoid game as a child
 ![Arkanoid game](https://images-eu.ssl-images-amazon.com/images/I/91KvSEjoGhL.png)
 ### Technical explanation
 I've added a FlyingBicolorCircle class that inherits from the original BicolorCircle class
-Added some code that uses mouse clicks to increase the number of flying balls and decrease the code for the balls on the tree
+
+And added some code that uses mouse clicks to increase the number of flying balls and decrease the code for the balls on the tree
